@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Under the Tortoise Moon: Shell Atlas
 
-## Getting Started
+A "living archive" of stories presented as a night-sky tortoise shell. Built with Next.js, Tailwind CSS, GSAP, and Supabase.
 
-First, run the development server:
+## 🚀 Deployment (Netlify)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Connect to Netlify**:
+   - Create a new site from Git.
+   - Select this repository.
+   - **Build Command**: `npm run build`
+   - **Publish Directory**: `.next` (Next.js Runtime handles this automatically) or standard Next.js defaults.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Environment Variables**:
+   Set the following in Netlify "Site configuration > Environment variables":
+   - `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase Project URL.
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase Anon Key.
+   - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase Service Role Key (for Admin actions).
+   - `ADMIN_TOKEN`: A secret string for accessing the admin dashboard (e.g., `moon-secret-123`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠 Local Development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+2. **Setup Supabase**:
+   - Create a new Supabase project.
+   - Go to SQL Editor and run the script in `supabase_schema.sql`.
+   - Create a Storage bucket named `contribution-audio` and toggle it to **Private**.
+   - Get your keys from Project Settings > API.
 
-To learn more about Next.js, take a look at the following resources:
+3. **Configure Environment**:
+   - Copy `env.example` to `.env.local` and fill in your keys.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Run Dev Server**:
+   ```bash
+   npm run dev
+   ```
+   Visit `http://localhost:3000`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🐢 Features & Routes
 
-## Deploy on Vercel
+- **Home (`/`)**: Interactive Shell.
+- **Stories (`/stories/[slug]`)**: Read and listen to the 7 curated stories.
+- **Contribute (`/contribute`)**: Submit your own story, proverb, or voice note.
+- **Sky (`/sky`)**: Browse approved community contributions.
+- **Admin (`/admin`)**: Moderate submissions (Login required via `ADMIN_TOKEN`).
+- **Exhibit (`/exhibit`)**: Installation mode instructions.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚠️ Admin Access
+Navigate to `/admin` and enter the token defined in your `.env` `ADMIN_TOKEN`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+All rights reserved.
