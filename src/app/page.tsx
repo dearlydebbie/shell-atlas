@@ -19,9 +19,22 @@ export default function Home() {
       </header>
 
       <div className="z-10 w-full flex-1 flex flex-col items-center justify-center min-h-[400px]">
-        <p className="text-amber-400/80 mb-6 text-sm font-medium tracking-wide animate-pulse">
-          Sit under the tortoise moon. Choose a shell.
-        </p>
+        <div className="text-center mb-8 max-w-2xl">
+          <p className="text-amber-400/80 mb-4 text-sm font-medium tracking-wide animate-pulse">
+            Sit under the tortoise moon. Choose a shell.
+          </p>
+          <p className="text-slate-300 text-sm leading-relaxed mb-6">
+            This is a small web archive built from stories my father told me — animal tales that carry moral instruction, humour, warning, and sometimes an uncomfortable truth. Each scute opens one story card: listen (soon), read, trace the moral threads, and leave a contribution if you have a similar story, proverb, or memory from your own lineage.
+          </p>
+          <div className="space-y-3">
+            <p className="text-slate-400 text-xs uppercase tracking-widest font-medium">
+              Choose a scute to begin.
+            </p>
+            <p className="text-slate-500 text-xs">
+              Or <Link href="/contribute" className="text-amber-400 hover:text-amber-300 transition-colors">add a story/proverb to the community sky</Link>.
+            </p>
+          </div>
+        </div>
 
         <Shell />
       </div>
