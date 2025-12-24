@@ -26,4 +26,5 @@ export interface Story {
     tags: string[];
     daughterNote: string;
     reflectionPrompt: string;
+    contributeCTA: string;
 }
