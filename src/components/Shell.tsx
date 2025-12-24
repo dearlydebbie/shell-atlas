@@ -2,17 +2,58 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
-import Link from 'next/link';
 import { stories } from '@/lib/stories';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+import { Contribution } from '@/lib/types';
+
+interface StarPosition {
+    x: number;
+    y: number;
+    delay: number;
+    contribution: Contribution;
+}
 
 export default function Shell() {
     const shellRef = useRef<SVGSVGElement>(null);
     const [hoveredStory, setHoveredStory] = useState<string | null>(null);
+    const [stars, setStars] = useState<StarPosition[]>([]);
     const router = useRouter();
+    const supabase = createClient();
 
     useEffect(() => {
-        // Breathing animation
+        // Fetch approved contributions for stars
+        const fetchStars = async () => {
+            const { data } = await supabase
+                .from('contributions')
+                .select('id, type, theme, origin_region, created_at, status')
+                .eq('status', 'approved')
+                .limit(50); // Limit stars to avoid clutter
+
+            if (data) {
+                const newStars = data.map((c: any) => {
+                    // Generate random polar coordinates outside the shell radius (approx 150)
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 160 + Math.random() * 80; // Between 160 and 240 radius
+                    const x = 200 + Math.cos(angle) * distance;
+                    const y = 200 + Math.sin(angle) * distance;
+
+                    return {
+                        x,
+                        y,
+                        delay: Math.random() * 5,
+                        contribution: c
+                    };
+                });
+                setStars(newStars);
+            }
+        };
+
+        fetchStars();
+    }, []);
+
+    useEffect(() => {
+        // Breathing animation for Shell Scutes
         const ctx = gsap.context(() => {
             gsap.to(".shell-scute", {
                 scale: 1.02,
@@ -26,10 +67,23 @@ export default function Shell() {
                     from: "center"
                 }
             });
+
+            // Star twinkle animation
+            gsap.to(".star-dot", {
+                opacity: 0.2,
+                duration: 2,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut",
+                stagger: {
+                    amount: 2,
+                    from: "random"
+                }
+            });
         }, shellRef);
 
         return () => ctx.revert();
-    }, []);
+    }, [stars]);
 
     const handleMouseEnter = (id: string) => {
         setHoveredStory(id);
@@ -44,6 +98,11 @@ export default function Shell() {
     const handleClick = (slug: string) => {
         router.push(`/stories/${slug}`);
     };
+
+    const handleStarClick = (id: string) => {
+        router.push(`/sky/${id}`);
+    };
+
 
     // Simplified geometric shell: 1 center, 6 surrounding
     return (
@@ -62,6 +121,25 @@ export default function Shell() {
                         <stop offset="100%" stopColor="transparent" stopOpacity="0" />
                     </radialGradient>
                 </defs>
+
+                {/* Render Stars */}
+                {stars.map((star) => (
+                    <circle
+                        key={star.contribution.id}
+                        cx={star.x}
+                        cy={star.y}
+                        r={star.contribution.type === 'voice' ? 3 : 2}
+                        fill={star.contribution.type === 'voice' ? '#60a5fa' : star.contribution.type === 'proverb' ? '#fbbf24' : '#34d399'}
+                        className="star-dot cursor-pointer transition-transform hover:scale-150"
+                        opacity="0.8"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleStarClick(star.contribution.id);
+                        }}
+                    >
+                        <title>{star.contribution.theme} ({star.contribution.origin_region})</title>
+                    </circle>
+                ))}
 
                 {/* Scute 1: Center */}
                 <g

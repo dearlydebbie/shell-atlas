@@ -1,9 +1,10 @@
 import { stories } from '@/lib/stories';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Play, Pause, Mic, BookOpen } from 'lucide-react';
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ArrowLeft } from 'lucide-react';
+import { StoryPlayer } from '@/components/story/StoryPlayer';
+import { StoryReflection } from '@/components/story/StoryReflection';
+import { StoryTranscript } from '@/components/story/StoryTranscript';
 
 // Generate static params for all stories
 export function generateStaticParams() {
@@ -53,62 +54,12 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
                 <div className="grid md:grid-cols-[1fr,1.5fr] gap-12">
                     {/* Left Column: Audio & Reflection */}
                     <div className="space-y-12">
-
-                        {/* Audio Player Placeholder */}
-                        <section className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                            <h2 className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 mb-4">
-                                <Mic className="w-4 h-4" /> Listen
-                            </h2>
-                            <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                                <button className="w-12 h-12 flex items-center justify-center bg-amber-500 rounded-full text-slate-900 hover:bg-amber-400 transition-colors shrink-0">
-                                    <Play className="w-5 h-5 ml-1" />
-                                </button>
-                                <div className="flex-1 space-y-2">
-                                    <div className="h-1 bg-slate-700 rounded-full w-full overflow-hidden">
-                                        <div className="h-full bg-amber-500 w-1/3"></div>
-                                    </div>
-                                    <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                                        <span>0:00</span>
-                                        <span>0:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <p className="text-xs text-slate-500 mt-3 text-center">Audio coming soon</p>
-                        </section>
-
-                        {/* Daughter Note */}
-                        <section className="relative p-6 bg-slate-900 rounded-2xl border-l-4 border-amber-500/50">
-                            <h3 className="text-amber-500 font-serif text-lg mb-2">Daughter's Note</h3>
-                            <p className="text-slate-300 leading-relaxed text-sm">
-                                "{story.daughterNote}"
-                            </p>
-                        </section>
-
-                        {/* Contribute CTA */}
-                        <div className="p-6 rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-900/50">
-                            <h3 className="font-serif text-xl mb-2 text-slate-200">What did this story teach you?</h3>
-                            <p className="text-sm text-slate-400 mb-6">{story.reflectionPrompt}</p>
-                            <Link
-                                href={`/contribute?from=${story.slug}`}
-                                className="flex justify-center w-full py-3 px-6 bg-slate-100 text-slate-900 font-medium rounded-lg hover:bg-amber-400 transition-colors"
-                            >
-                                Add a Thread
-                            </Link>
-                        </div>
-
+                        <StoryPlayer title={story.title} />
+                        <StoryReflection story={story} />
                     </div>
 
                     {/* Right Column: Reading */}
-                    <div>
-                        <h2 className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 mb-6 sticky top-0 bg-slate-950 py-4 z-10">
-                            <BookOpen className="w-4 h-4" /> Read
-                        </h2>
-                        <article className="prose prose-invert prose-lg prose-p:font-light prose-p:leading-8 max-w-none text-slate-300">
-                            {story.transcript.map((paragraph, i) => (
-                                <p key={i}>{paragraph}</p>
-                            ))}
-                        </article>
-                    </div>
+                    <StoryTranscript text={story.transcript} />
                 </div>
             </div>
         </div>
