@@ -44,7 +44,7 @@ export default function ExhibitPage() {
                         alt="Scan to enter"
                         className="w-64 h-64 mb-4"
                     />
-                    <p className="text-slate-900 font-mono text-sm">shellatlas.netlify.app/exhibit/remote</p>
+                    <p className="text-slate-900 font-mono text-sm">shell-atlas.netlify.app/exhibit/remote</p>
                 </div>
             </div>
         </div>
