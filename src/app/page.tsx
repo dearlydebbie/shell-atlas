@@ -23,6 +23,8 @@ export default function Home() {
           <p className="text-amber-400/80 mb-4 text-sm font-medium tracking-wide animate-pulse">
             Sit under the tortoise moon. Choose a shell.
           </p>
+
+        <Shell />
           <p className="text-slate-300 text-sm leading-relaxed mb-6">
             This is a small web archive built from stories my father told me — animal tales that carry moral instruction, humour, warning, and sometimes an uncomfortable truth. Each scute opens one story card: listen (soon), read, trace the moral threads, and leave a contribution if you have a similar story, proverb, or memory from your own lineage.
           </p>
@@ -35,8 +37,6 @@ export default function Home() {
             </p>
           </div>
         </div>
-
-        <Shell />
       </div>
 
       <footer className="z-10 w-full max-w-5xl flex justify-between items-end text-xs text-slate-500 mt-12 mb-4">

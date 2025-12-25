@@ -17,9 +17,21 @@ interface StarPosition {
 export default function Shell() {
     const shellRef = useRef<SVGSVGElement>(null);
     const [hoveredStory, setHoveredStory] = useState<string | null>(null);
+    const [hoveredScute, setHoveredScute] = useState<string | null>(null);
     const [stars, setStars] = useState<StarPosition[]>([]);
     const router = useRouter();
     const supabase = createClient();
+
+    // Scute positions for hover preview positioning (relative to SVG viewBox 400x400)
+    const scutePositions: { [key: string]: { x: number; y: number } } = {
+        '1': { x: 200, y: 200 }, // Center
+        '2': { x: 200, y: 110 }, // Top
+        '3': { x: 270, y: 150 }, // Top Right
+        '4': { x: 270, y: 250 }, // Bottom Right
+        '5': { x: 200, y: 290 }, // Bottom
+        '6': { x: 130, y: 250 }, // Bottom Left
+        '7': { x: 130, y: 150 }, // Top Left
+    };
 
     useEffect(() => {
         // Fetch approved contributions for stars
@@ -85,14 +97,16 @@ export default function Shell() {
         return () => ctx.revert();
     }, [stars]);
 
-    const handleMouseEnter = (id: string) => {
+    const handleMouseEnter = (id: string, scuteId: string) => {
         setHoveredStory(id);
-        gsap.to(`#scute-${id}`, { fill: "#334155", duration: 0.3 }); // Slate 700
+        setHoveredScute(scuteId);
+        gsap.to(`#scute-${scuteId}`, { fill: "#334155", duration: 0.3 }); // Slate 700
     };
 
-    const handleMouseLeave = (id: string) => {
+    const handleMouseLeave = (scuteId: string) => {
         setHoveredStory(null);
-        gsap.to(`#scute-${id}`, { fill: "#1e293b", duration: 0.3 }); // Slate 800
+        setHoveredScute(null);
+        gsap.to(`#scute-${scuteId}`, { fill: "#1e293b", duration: 0.3 }); // Slate 800
     };
 
     const handleClick = (slug: string) => {
@@ -145,8 +159,8 @@ export default function Shell() {
                 <g
                     id="scute-1"
                     className="shell-scute cursor-pointer"
-                    onClick={() => handleClick(stories[0].slug)}
-                    onMouseEnter={() => handleMouseEnter('1')}
+                    onClick={() => handleClick(stories[6].slug)}
+                    onMouseEnter={() => handleMouseEnter('7', '1')}
                     onMouseLeave={() => handleMouseLeave('1')}
                 >
                     <path
@@ -163,8 +177,8 @@ export default function Shell() {
                 <g
                     id="scute-2"
                     className="shell-scute cursor-pointer"
-                    onClick={() => handleClick(stories[1].slug)}
-                    onMouseEnter={() => handleMouseEnter('2')}
+                    onClick={() => handleClick(stories[0].slug)}
+                    onMouseEnter={() => handleMouseEnter('1', '2')}
                     onMouseLeave={() => handleMouseLeave('2')}
                 >
                     <path
@@ -181,8 +195,8 @@ export default function Shell() {
                 <g
                     id="scute-3"
                     className="shell-scute cursor-pointer"
-                    onClick={() => handleClick(stories[2].slug)}
-                    onMouseEnter={() => handleMouseEnter('3')}
+                    onClick={() => handleClick(stories[1].slug)}
+                    onMouseEnter={() => handleMouseEnter('2', '3')}
                     onMouseLeave={() => handleMouseLeave('3')}
                 >
                     <path
@@ -197,8 +211,8 @@ export default function Shell() {
                 <g
                     id="scute-4"
                     className="shell-scute cursor-pointer"
-                    onClick={() => handleClick(stories[3].slug)}
-                    onMouseEnter={() => handleMouseEnter('4')}
+                    onClick={() => handleClick(stories[2].slug)}
+                    onMouseEnter={() => handleMouseEnter('3', '4')}
                     onMouseLeave={() => handleMouseLeave('4')}
                 >
                     <path
@@ -213,8 +227,8 @@ export default function Shell() {
                 <g
                     id="scute-5"
                     className="shell-scute cursor-pointer"
-                    onClick={() => handleClick(stories[4].slug)}
-                    onMouseEnter={() => handleMouseEnter('5')}
+                    onClick={() => handleClick(stories[3].slug)}
+                    onMouseEnter={() => handleMouseEnter('4', '5')}
                     onMouseLeave={() => handleMouseLeave('5')}
                 >
                     <path
@@ -229,8 +243,8 @@ export default function Shell() {
                 <g
                     id="scute-6"
                     className="shell-scute cursor-pointer"
-                    onClick={() => handleClick(stories[5].slug)}
-                    onMouseEnter={() => handleMouseEnter('6')}
+                    onClick={() => handleClick(stories[4].slug)}
+                    onMouseEnter={() => handleMouseEnter('5', '6')}
                     onMouseLeave={() => handleMouseLeave('6')}
                 >
                     <path
@@ -245,8 +259,8 @@ export default function Shell() {
                 <g
                     id="scute-7"
                     className="shell-scute cursor-pointer"
-                    onClick={() => handleClick(stories[6].slug)}
-                    onMouseEnter={() => handleMouseEnter('7')}
+                    onClick={() => handleClick(stories[5].slug)}
+                    onMouseEnter={() => handleMouseEnter('6', '7')}
                     onMouseLeave={() => handleMouseLeave('7')}
                 >
                     <path
@@ -260,9 +274,18 @@ export default function Shell() {
             </svg>
 
             {/* Hover Preview Overlay */}
-            {hoveredStory && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="bg-slate-900/90 border border-slate-700 p-4 rounded-xl backdrop-blur-sm max-w-[200px] text-center animate-fade-in shadow-xl">
+            {hoveredStory && hoveredScute && (
+                <div className="absolute inset-0 pointer-events-none">
+                    <div
+                        className="bg-slate-900/90 border border-slate-700 p-4 rounded-xl backdrop-blur-sm max-w-[200px] text-center animate-fade-in shadow-xl"
+                        style={{
+                            position: 'absolute',
+                            left: `${(scutePositions[hoveredScute].x / 400) * 100}%`,
+                            top: `${(scutePositions[hoveredScute].y / 400) * 100}%`,
+                            transform: 'translate(-50%, -120%)', // Position above the scute
+                            zIndex: 10
+                        }}
+                    >
                         <p className="text-amber-400 text-xs font-medium tracking-widest uppercase mb-1">Story {hoveredStory}</p>
                         <h3 className="text-slate-100 font-serif text-lg leading-tight">
                             {stories.find(s => s.id === hoveredStory)?.title}
